@@ -1,46 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>WebRTC Video Streaming</title>
+    <title>DASH Video Player</title>
+    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+    <style>
+        video {
+            width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
-    <h2>Video Stream</h2>
-    <video id="video" controls autoplay></video>
+    <h1>DASH Streaming Example</h1>
+    <!-- Add autoplay and muted attributes to the video tag -->
+    <video id="dash-video" controls autoplay muted></video>
     <script>
-        var pc = new RTCPeerConnection();
-
-        // 当远程轨道到达时，添加到视频元素
-        pc.ontrack = function(event) {
-            var el = document.getElementById('video');
-            if (el.srcObject !== event.streams[0]) {
-                el.srcObject = event.streams[0];
-                console.log('pc.ontrack', event.streams[0]);
-            }
-        };
-
-        // 创建并发送一个offer到服务器
-        pc.createOffer().then(function(offer) {
-            return pc.setLocalDescription(offer);
-        }).then(function() {
-            // 使用fetch API发送offer到服务器
-            return fetch('/offer', {
-                method: 'POST',
-                body: JSON.stringify({
-                    sdp: pc.localDescription.sdp,
-                    type: pc.localDescription.type
-                }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-        }).then(function(response) {
-            return response.json();
-        }).then(function(answer) {
-            // 接收并设置远程描述为服务器的answer
-            return pc.setRemoteDescription(new RTCSessionDescription(answer));
-        }).catch(function(e) {
-            console.error(e);
-        });
+        (function(){
+            var url = "http://localhost:8000/video/output.mpd"; // URL to your DASH .mpd file
+            var player = dashjs.MediaPlayer().create(); // Create a new dash.js player instance
+            player.initialize(document.querySelector("#dash-video"), url, true); // Initialize the player with the video element and the URL
+            // The video should now autoplay because of the autoplay attribute on the video element
+        })();
     </script>
 </body>
 </html>
