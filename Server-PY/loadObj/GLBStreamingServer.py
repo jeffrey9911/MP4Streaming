@@ -13,8 +13,11 @@ if not os.path.exists(f"{FOLDER}/glb"):
     quit()
 '''
 
-MEDIA_FOLDER = '/Users/yaojie/Desktop/iMS-Patrick/glb'
-
+MEDIA_FOLDER = input("Enter folder path: ").strip("'").strip('"')
+if not os.path.exists(f"{MEDIA_FOLDER}/glb"):
+    print("Folder does not exist")
+    quit()
+MEDIA_FOLDER = f"{MEDIA_FOLDER}/glb"
 print(MEDIA_FOLDER)
 
 @app.route('/')
@@ -26,4 +29,4 @@ def stream_video(path):
     return send_from_directory(MEDIA_FOLDER, path)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8000)
+    app.run(host="192.168.2.77", debug=True, port=8000)

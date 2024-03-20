@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 public class SampleRead : MonoBehaviour
 {
-
+    
     [SerializeField] string baseUrl = "";
     [SerializeField] string mpdFile = "";
 

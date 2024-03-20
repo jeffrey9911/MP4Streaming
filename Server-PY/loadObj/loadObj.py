@@ -22,7 +22,7 @@ def SortFiles(filePath, fileType):
         return int(match.group(1))
     return 0
 
-FOLDER = input("Enter folder path: ").strip("'")
+FOLDER = input("Enter folder path: ").strip("'").strip('"')
 if not os.path.exists(f"{FOLDER}/glb"):
     os.makedirs(f"{FOLDER}/glb")
 
@@ -74,7 +74,7 @@ for i in range(len(MESHES)):
     glbFilePath = f"{FOLDER}/glb/{name}.glb"
     bpy.ops.export_scene.gltf(filepath=glbFilePath, export_format='GLB')
 
-    print(f"File {glbFilePath} created")
+    #print(f"File {glbFilePath} created")
 
 GLBMESHES = GetFiles(f"{FOLDER}/glb", ".glb")
 GLBMESHES = sorted(GLBMESHES, key=lambda x: SortFiles(x, ".glb"))
@@ -96,7 +96,7 @@ period = ET.SubElement(mpdFile, "Period", start="0")
 
 adaptationSet = ET.SubElement(period, "AdaptationSet")
 
-representation = ET.SubElement(adaptationSet, "Representation", id="glb_models", mimeType="model/gltf-binary", codecs="none", bandwidth="100000")
+representation = ET.SubElement(adaptationSet, "Representation", id="glb_models", mimeType="model/gltf-binary", codecs="none", bandwidth="200000")
 
 baseUrl = ET.SubElement(representation, "BaseURL")
 baseUrl.text = f"{FOLDER}/glb"
@@ -107,6 +107,7 @@ for glbFile in GLBMESHES:
     ET.SubElement(segmentList, "SegmentURL", media=f"{os.path.basename(glbFile)}")
 
 tree = ET.ElementTree(mpdFile)
-tree.write(f"{FOLDER}/glb/glbStream.mpd", encoding="utf-8", xml_declaration=True)
+tree.write(f"{FOLDER}/glb/stream.mpd", encoding="utf-8", xml_declaration=True)
 
-print(f"File {FOLDER}/glb/glbStream.mpd created")
+print(f"File {FOLDER}/glb/stream.mpd created")
+input("Press enter to quit")

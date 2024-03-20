@@ -16,6 +16,8 @@ public class SampleLoad : MonoBehaviour
 
     GLTFast.GltfAsset gltfAsset;
 
+    public string TestUrl;
+
     void Start()
     {
         gltfAsset = this.GetComponent<GLTFast.GltfAsset>();
@@ -56,6 +58,19 @@ public class SampleLoad : MonoBehaviour
         for (int i = 0; i < transform.childCount - 1; i++)
         {
             transform.GetChild(i).gameObject.SetActive(false);
+        }
+    }
+
+    [ContextMenu("TEST")]
+    public async void TestFuntion()
+    {
+        GLTFast.GltfImport gltfImport = new GLTFast.GltfImport();
+        var sucess = await gltfImport.Load(TestUrl);
+        if(sucess)
+        {
+            this.GetComponent<MeshFilter>().sharedMesh = gltfImport.GetMeshes()[0];
+            this.GetComponent<MeshRenderer>().material = gltfImport.GetMaterial();
+            
         }
     }
 }
