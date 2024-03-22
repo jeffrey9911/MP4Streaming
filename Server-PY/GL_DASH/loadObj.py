@@ -8,11 +8,11 @@ import bpy
 
 
 def GetFiles(filePath, fileType):
-    objFiles = []
+    files = []
     for fileName in os.listdir(filePath):
         if fileName.endswith(fileType):
-            objFiles.append(os.path.join(filePath, fileName))
-    return objFiles
+            files.append(os.path.join(filePath, fileName))
+    return files
 
 
 def SortFiles(filePath, fileType):
@@ -72,7 +72,7 @@ for i in range(len(MESHES)):
 
     name, ext = os.path.splitext(baseName)
     glbFilePath = f"{FOLDER}/glb/{name}.glb"
-    bpy.ops.export_scene.gltf(filepath=glbFilePath, export_format='GLB')
+    bpy.ops.export_scene.gltf(filepath=glbFilePath, export_format='GLB', export_materials='NONE')
 
     #print(f"File {glbFilePath} created")
 

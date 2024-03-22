@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Xml.Linq;
 using System;
+using System.Linq;
+using Unity.VisualScripting;
+using UnityEngine.Video;
 
 public class StreamHandler : MonoBehaviour
 {
@@ -16,7 +19,7 @@ public class StreamHandler : MonoBehaviour
     public int TotalLoadCount {get; private set;} = 0;
     public int CurrentLoadCount {get; private set;} = 0;
     public bool isLoaded { get; private set; } = false;
-
+    bool isTextureLoaded = false;
 
     public void SetManifestURL(string baseUrl, string name)
     {
@@ -66,9 +69,29 @@ public class StreamHandler : MonoBehaviour
 
     void ParseManifest(string mpdContent)
     {
-        XDocument xml = XDocument.Parse(mpdContent);
+        XDocument xDocument = XDocument.Parse(mpdContent);
+        string mimeType = ParseMimeType(xDocument);
+
+        switch (mimeType)
+        {
+            case "model/gltf-binary":
+                StartCoroutine(ParseGLBinary(xDocument));
+                StartCoroutine(ParseMP4());
+                break;
+
+            case "video/mp4":
+                ParseMP4(xDocument);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    IEnumerator ParseGLBinary(XDocument xDocument)
+    {
         XNamespace ns = "urn:mpeg:dash:schema:mpd:2011";
-        var segmentURLs = xml.Descendants(ns + "SegmentURL");
+        var segmentURLs = xDocument.Descendants(ns + "SegmentURL");
 
         List<string> segments = new List<string>();
         foreach (var urlElement in segmentURLs)
@@ -80,6 +103,76 @@ public class StreamHandler : MonoBehaviour
         Debug.Log($"[IMeshStreamer - Handler] Manifest parsed: {segments.Count} segments");
         
         LoadSegment(segments);
+
+        yield return null;
+    }
+
+    IEnumerator ParseMP4()
+    {
+        Debug.Log("[IMeshStreamer - Handler] Loading video");
+        VideoPlayer videoPlayer = this.AddComponent<VideoPlayer>();
+        RenderTexture renderTexture = new RenderTexture(2048, 2048, 32);
+
+        videoPlayer.playOnAwake = false;
+        videoPlayer.url = $"{BaseURL}/stream.mp4";
+
+        videoPlayer.renderMode = VideoRenderMode.RenderTexture;
+        videoPlayer.targetTexture = renderTexture;
+
+        videoPlayer.prepareCompleted += VideoPrepared;
+        videoPlayer.frameReady += FrameLoaded;
+        
+        videoPlayer.Prepare();
+
+        while (!isTextureLoaded)
+        {
+            yield return null;
+        }
+
+        videoPlayer.Stop();
+        Destroy(videoPlayer);
+        Destroy(renderTexture);
+    }
+
+    void VideoPrepared(VideoPlayer videoPlayer)
+    {
+        Debug.Log("[IMeshStreamer - Handler] Video prepared");
+        videoPlayer.Play();
+    }
+
+    void FrameLoaded(VideoPlayer videoPlayer, long frame)
+    {
+        Debug.Log("[IMeshStreamer - Handler] Frame loaded");
+        Texture2D texture = new Texture2D(2048, 2048);
+        RenderTexture.active = videoPlayer.targetTexture;
+        texture.ReadPixels(new Rect(0, 0, 2048, 2048), 0, 0);
+        texture.Apply();
+        RenderTexture.active = null;
+
+        iMeshManager.streamContainer.LoadTexture(texture);
+
+        if (iMeshManager.streamContainer.Textures.Count >= TotalLoadCount)
+        {
+            Debug.Log("[IMeshStreamer - Handler] Video loaded");
+            videoPlayer.Stop();
+            isTextureLoaded = true;
+        }
+    }
+
+    void ParseMP4(XDocument xDocument)
+    {
+        
+    }
+
+    string ParseMimeType(XDocument xDocument)
+    {
+        XNamespace ns = "urn:mpeg:dash:schema:mpd:2011";
+
+        string mimeType = xDocument.Descendants(ns + "Representation")
+            .FirstOrDefault()?
+            .Attribute("mimeType")?.Value;
+
+        return mimeType;
     }
 
     public async void LoadSegment(List<string> segments)
@@ -102,5 +195,10 @@ public class StreamHandler : MonoBehaviour
 
         isLoaded = true;
         Debug.Log("[IMeshStreamer - Handler] Segments loaded");
+    }
+
+    void OnDestory()
+    {
+        iMeshManager.streamContainer.Clear();
     }
 }

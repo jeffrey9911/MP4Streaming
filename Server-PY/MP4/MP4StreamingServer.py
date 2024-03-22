@@ -5,7 +5,14 @@ app = Flask(__name__)
 
 # ffmpeg -i input.mp4 -map 0 -map 0 -map 0 -b:v:0 500k -b:v:1 1000k -b:v:2 2000k -s:v:1 640x360 -s:v:2 1280x720 -adaptation_sets "id=0,streams=v id=1,streams=a" -use_template 1 -use_timeline 1 -f dash output.mpd
 
-MEDIA_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'media')
+#MEDIA_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'media')
+
+
+MEDIA_FOLDER = input("Enter folder path: ").strip("'").strip('"')
+if not os.path.exists(f"{MEDIA_FOLDER}/tex_vid"):
+    print("Folder does not exist")
+    quit()
+MEDIA_FOLDER = f"{MEDIA_FOLDER}/tex_vid"
 print(MEDIA_FOLDER)
 
 @app.route('/')
@@ -17,4 +24,4 @@ def stream_video(path):
     return send_from_directory(MEDIA_FOLDER, path)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8000)
+    app.run(host="192.168.2.77", debug=True, port=8000)
