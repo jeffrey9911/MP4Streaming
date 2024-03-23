@@ -17,6 +17,16 @@ def SortFiles(filePath, fileType):
         return int(match.group(1))
     return 0
 
+def FilePattern(input_filename):
+    match = re.search(r"(\d+)(?=\.\w+$)", input_filename)
+    if match:
+        index = match.group(1)
+        length = len(index)
+        pattern = re.sub(r"\d+(?=\.\w+$)", f"%0{length}d", input_filename)
+        return pattern
+    else:
+        return "No digits found in the file name."
+
 
 FOLDER = input("Enter folder path: ").strip("'").strip('"')
 if not os.path.exists(f"{FOLDER}/tex_vid"):
@@ -25,19 +35,30 @@ if not os.path.exists(f"{FOLDER}/tex_vid"):
 TEXTURES = GetFiles(FOLDER, ".jpg")
 TEXTURES = sorted(TEXTURES, key=lambda x: SortFiles(x, ".jpg"))
 
-for texture in TEXTURES:
-    print(texture)
+print(f"{FilePattern(os.path.basename(TEXTURES[0]))}, Converting to MP4...")
 
-temp_file = 'temp.txt'
-
-with open(temp_file, 'w') as f:
-    for texture in TEXTURES:
-        f.write(f"file '{texture}'\n")
 
 output_file = f"{FOLDER}/tex_vid/output.mp4"
 
 
-''' # NEED FIX #ffmpeg -framerate 30 -i "c:\Users\jeffr\Desktop\mesh1\tex_talk1full_QLOW_%07d.jpg" -c:v libx264 -vf fps=30 -pix_fmt yuv420p output.mp4
+
+#ffmpeg -framerate 30 -i "c:\Users\jeffr\Desktop\mesh1/tex_talk1full_QLOW_%07d.jpg" -c:v libx264 -vf fps=30 -pix_fmt yuv420p output.mp4
+
+ffmpeg_cmd = [
+    'ffmpeg',
+    '-framerate', '30',
+    '-i', f"{FOLDER}/{FilePattern(os.path.basename(TEXTURES[0]))}",
+    '-c:v', 'libx264',
+    '-vf', 'fps=30',
+    '-pix_fmt', 'yuv420p',
+    output_file
+]
+
+subprocess.run(ffmpeg_cmd)
+
+
+
+'''  
 
 ffmpeg_cmd = [
     'ffmpeg',
@@ -55,7 +76,6 @@ ffmpeg_cmd = [
 
 subprocess.run(ffmpeg_cmd)
 '''
-os.remove(temp_file)
 
 '''
 ffmpeg_cmd = [

@@ -205,8 +205,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalRotation: {x: 0.8524267, y: -0.31633583, z: 0.2663214, w: 0.3199584}
+  m_LocalPosition: {x: 1.57, y: 0.83, z: 1.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c11da860e9978bc478d08177f7f3d0ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TargetFPS: 30
+  TargetFPS: 60
 --- !u!114 &798129252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -287,7 +287,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a201af9869a36014081318a965f280b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Textures: []
 --- !u!114 &798129253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,7 +299,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9e0b5db9246f9345a87d1d5181f5d0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BaseURL: http://192.168.2.77:8000/video
+  BaseURL: http://127.0.0.1:8000/video
   Manifest: stream.mpd
 --- !u!1 &963194225
 GameObject:

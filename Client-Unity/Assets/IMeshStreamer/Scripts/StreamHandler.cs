@@ -16,10 +16,11 @@ public class StreamHandler : MonoBehaviour
 
     GLTFast.GltfImport gltfImport;
 
-    public int TotalLoadCount {get; private set;} = 0;
+    public int TotalLoadCount {get; private set;} = -1;
     public int CurrentLoadCount {get; private set;} = 0;
-    public bool isLoaded { get; private set; } = false;
-    bool isTextureLoaded = false;
+
+    public bool isMeshLoaded { get; private set; } = false;
+    public bool isTextureLoaded { get; private set; } = false;
 
     public void SetManifestURL(string baseUrl, string name)
     {
@@ -79,10 +80,6 @@ public class StreamHandler : MonoBehaviour
                 StartCoroutine(ParseMP4());
                 break;
 
-            case "video/mp4":
-                ParseMP4(xDocument);
-                break;
-
             default:
                 break;
         }
@@ -110,58 +107,32 @@ public class StreamHandler : MonoBehaviour
     IEnumerator ParseMP4()
     {
         Debug.Log("[IMeshStreamer - Handler] Loading video");
-        VideoPlayer videoPlayer = this.AddComponent<VideoPlayer>();
-        RenderTexture renderTexture = new RenderTexture(2048, 2048, 32);
 
-        videoPlayer.playOnAwake = false;
-        videoPlayer.url = $"{BaseURL}/stream.mp4";
+        iMeshManager.streamContainer.InitVideoTexture($"{BaseURL}/stream.mp4");
 
-        videoPlayer.renderMode = VideoRenderMode.RenderTexture;
-        videoPlayer.targetTexture = renderTexture;
+        yield return null;
+    }
 
-        videoPlayer.prepareCompleted += VideoPrepared;
-        videoPlayer.frameReady += FrameLoaded;
-        
-        videoPlayer.Prepare();
-
-        while (!isTextureLoaded)
+    public IEnumerator VideoTextureOnReady()
+    {
+        while (TotalLoadCount < 0)
         {
             yield return null;
         }
 
-        videoPlayer.Stop();
-        Destroy(videoPlayer);
-        Destroy(renderTexture);
-    }
-
-    void VideoPrepared(VideoPlayer videoPlayer)
-    {
-        Debug.Log("[IMeshStreamer - Handler] Video prepared");
-        videoPlayer.Play();
-    }
-
-    void FrameLoaded(VideoPlayer videoPlayer, long frame)
-    {
-        Debug.Log("[IMeshStreamer - Handler] Frame loaded");
-        Texture2D texture = new Texture2D(2048, 2048);
-        RenderTexture.active = videoPlayer.targetTexture;
-        texture.ReadPixels(new Rect(0, 0, 2048, 2048), 0, 0);
-        texture.Apply();
-        RenderTexture.active = null;
-
-        iMeshManager.streamContainer.LoadTexture(texture);
-
-        if (iMeshManager.streamContainer.Textures.Count >= TotalLoadCount)
+        if (iMeshManager.streamContainer.VideoContainer.frameCount == (ulong)TotalLoadCount)
         {
-            Debug.Log("[IMeshStreamer - Handler] Video loaded");
-            videoPlayer.Stop();
+            Debug.Log("[IMeshStreamer - Handler] Video Mesh Matched");
             isTextureLoaded = true;
-        }
-    }
 
-    void ParseMP4(XDocument xDocument)
-    {
-        
+            iMeshManager.streamPlayer.Play();
+        }
+        else
+        {
+            Debug.LogError("[IMeshStreamer - Handler] Video Mesh Mismatch");
+            isTextureLoaded = false;
+        }
+
     }
 
     string ParseMimeType(XDocument xDocument)
@@ -178,7 +149,7 @@ public class StreamHandler : MonoBehaviour
     public async void LoadSegment(List<string> segments)
     {
         CurrentLoadCount = 0;
-        isLoaded = false;
+        isMeshLoaded = false;
 
         foreach (var segment in segments)
         {
@@ -193,7 +164,7 @@ public class StreamHandler : MonoBehaviour
             }
         }
 
-        isLoaded = true;
+        isMeshLoaded = true;
         Debug.Log("[IMeshStreamer - Handler] Segments loaded");
     }
 

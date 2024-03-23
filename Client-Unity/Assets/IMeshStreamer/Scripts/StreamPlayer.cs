@@ -18,6 +18,7 @@ public class StreamPlayer : MonoBehaviour
     GameObject PlayerInstance;
     MeshFilter PlayerInstanceMesh;
     MeshRenderer PlayerInstanceRenderer;
+    Material PlayerInstanceMaterial;
 
     void Start()
     {
@@ -29,7 +30,10 @@ public class StreamPlayer : MonoBehaviour
 
     void Update()
     {
-        FramePlay();
+        if(iMeshManager.streamHandler.isTextureLoaded)
+        {
+            FramePlay();
+        }
     }
 
     [ContextMenu("Play")]
@@ -43,6 +47,10 @@ public class StreamPlayer : MonoBehaviour
         PlayerInstance.transform.localRotation = Quaternion.Euler(new Vector3(90f, 0, 0));
         PlayerInstanceMesh = PlayerInstance.AddComponent<MeshFilter>();
         PlayerInstanceRenderer = PlayerInstance.AddComponent<MeshRenderer>();
+        PlayerInstanceMaterial = new Material(Shader.Find("Standard"));
+        PlayerInstanceMaterial.SetTexture("_MainTex", iMeshManager.streamContainer.VideoTexture);
+        PlayerInstanceMaterial.SetFloat("_Glossiness", 0);
+        PlayerInstanceRenderer.material = PlayerInstanceMaterial;
     }
 
 
@@ -60,13 +68,14 @@ public class StreamPlayer : MonoBehaviour
 
 
         PlayerInstanceMesh.mesh = iMeshManager.streamContainer.Meshes[CurrentFrameIndex];
-        PlayerInstanceRenderer.material = iMeshManager.streamContainer.Materials[CurrentFrameIndex];
+        iMeshManager.streamContainer.VideoContainer.frame = CurrentFrameIndex;
+        //PlayerInstanceRenderer.material = iMeshManager.streamContainer.Materials[CurrentFrameIndex];
         //Debug.Log("[IMeshStreamer - Player] Swapping to frame " + CurrentFrameIndex);
     }
 
     void BufferingPlay(bool isReverse = false)
     {
-        if(iMeshManager.streamHandler.isLoaded)
+        if(iMeshManager.streamHandler.isMeshLoaded)
         {
             SwapFrame(isReverse);
         }
@@ -75,7 +84,7 @@ public class StreamPlayer : MonoBehaviour
             if (isBuffering)
             {
                 if ((iMeshManager.streamHandler.CurrentLoadCount - CurrentFrameIndex) > TargetFPS 
-                || iMeshManager.streamHandler.isLoaded)
+                || iMeshManager.streamHandler.isMeshLoaded)
                 {
                     isBuffering = false;
                     SwapFrame();
