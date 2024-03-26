@@ -75,9 +75,10 @@ public class StreamHandler : MonoBehaviour
 
         switch (mimeType)
         {
-            case "model/gltf-binary":
+            case "video/volumetric-video":
+                InitPlayer(xDocument);
                 StartCoroutine(ParseGLBinary(xDocument));
-                StartCoroutine(ParseMP4());
+                StartCoroutine(ParseMP4(xDocument));
                 break;
 
             default:
@@ -88,7 +89,7 @@ public class StreamHandler : MonoBehaviour
     IEnumerator ParseGLBinary(XDocument xDocument)
     {
         XNamespace ns = "urn:mpeg:dash:schema:mpd:2011";
-        var segmentURLs = xDocument.Descendants(ns + "SegmentURL");
+        var segmentURLs = xDocument.Descendants(ns + "GLBURL");
 
         List<string> segments = new List<string>();
         foreach (var urlElement in segmentURLs)
@@ -104,11 +105,17 @@ public class StreamHandler : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator ParseMP4()
+    IEnumerator ParseMP4(XDocument xDocument)
     {
         Debug.Log("[IMeshStreamer - Handler] Loading video");
 
-        iMeshManager.streamContainer.InitVideoTexture($"{BaseURL}/stream.mp4");
+        XNamespace ns = "urn:mpeg:dash:schema:mpd:2011";
+        var segmentURLs = xDocument.Descendants(ns + "VAURL");
+
+        if (segmentURLs.Count() > 0)
+        {
+            iMeshManager.streamContainer.InitVideoTexture($"{BaseURL}/{segmentURLs.First().Attribute("media").Value}");
+        }
 
         yield return null;
     }
@@ -120,16 +127,35 @@ public class StreamHandler : MonoBehaviour
             yield return null;
         }
 
-        if (iMeshManager.streamContainer.VideoContainer.frameCount == (ulong)TotalLoadCount)
+        if (iMeshManager.streamContainer.VideoContainer.frameCount > (ulong)TotalLoadCount)
         {
             Debug.Log("[IMeshStreamer - Handler] Video Mesh Matched");
-            isTextureLoaded = true;
 
-            iMeshManager.streamPlayer.Play();
+            /*
+            for (ulong i = 0; i < iMeshManager.streamContainer.VideoContainer.frameCount; i++)
+            {
+                iMeshManager.streamContainer.VideoContainer.frame = (long)i;
+
+                Texture2D tex = new Texture2D(iMeshManager.streamContainer.VideoContainer.texture.width, iMeshManager.streamContainer.VideoContainer.texture.height);
+                RenderTexture.active = iMeshManager.streamContainer.VideoContainer.texture as RenderTexture;
+                tex.ReadPixels(new Rect(0, 0, iMeshManager.streamContainer.VideoContainer.texture.width, iMeshManager.streamContainer.VideoContainer.texture.height), 0, 0);
+                tex.Apply();
+                RenderTexture.active = null;
+                iMeshManager.streamContainer.LoadTexture(tex);
+
+
+
+                yield return null;
+            }
+            */
+
+            //iMeshManager.streamPlayer.Play();
+
+            isTextureLoaded = true;
         }
         else
         {
-            Debug.LogError("[IMeshStreamer - Handler] Video Mesh Mismatch");
+            Debug.LogError($"[IMeshStreamer - Handler] Video Mesh Mismatch - GLB: {TotalLoadCount} MP4: {iMeshManager.streamContainer.VideoContainer.frameCount.ToString()}");
             isTextureLoaded = false;
         }
 
@@ -146,6 +172,18 @@ public class StreamHandler : MonoBehaviour
         return mimeType;
     }
 
+    void InitPlayer(XDocument xDocument)
+    {
+        XNamespace ns = "urn:mpeg:dash:schema:mpd:2011";
+        var segmentURLs = xDocument.Descendants(ns + "SEGINFO");
+
+        if (segmentURLs.Count() > 0)
+        {
+            int overidedFrameRate = int.Parse(segmentURLs.First().Attribute("fps").Value);
+            iMeshManager.streamPlayer.TargetFPS = overidedFrameRate;
+        }
+    }
+
     public async void LoadSegment(List<string> segments)
     {
         CurrentLoadCount = 0;
@@ -158,7 +196,12 @@ public class StreamHandler : MonoBehaviour
             if (success)
             {
                 iMeshManager.streamContainer.LoadMesh(gltfImport.GetMeshes()[0]);
-                iMeshManager.streamContainer.LoadMaterial(gltfImport.GetMaterial());
+
+                if (CurrentLoadCount == 0)
+                {
+                    iMeshManager.streamPlayer.InitMaterial(gltfImport.GetMaterial());
+                }
+                
 
                 CurrentLoadCount++;
             }

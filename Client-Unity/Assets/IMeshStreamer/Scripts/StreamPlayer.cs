@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using NUnit.Framework;
 using UnityEngine;
 
 public class StreamPlayer : MonoBehaviour
@@ -15,10 +16,18 @@ public class StreamPlayer : MonoBehaviour
     public int TargetFPS = 30;
     float FrameTimer = 0;
 
+    public bool IsManual = false;
+    public bool IsAVControlledPlay = false;
+
     GameObject PlayerInstance;
     MeshFilter PlayerInstanceMesh;
     MeshRenderer PlayerInstanceRenderer;
     Material PlayerInstanceMaterial;
+
+
+
+    public List<Texture2D> Textures = new List<Texture2D>();
+
 
     void Start()
     {
@@ -32,7 +41,14 @@ public class StreamPlayer : MonoBehaviour
     {
         if(iMeshManager.streamHandler.isTextureLoaded)
         {
-            FramePlay();
+            if (IsManual)
+            {
+                ManualPlay();
+            }
+            else
+            {
+                FramePlay();
+            }
         }
     }
 
@@ -47,16 +63,46 @@ public class StreamPlayer : MonoBehaviour
         PlayerInstance.transform.localRotation = Quaternion.Euler(new Vector3(90f, 0, 0));
         PlayerInstanceMesh = PlayerInstance.AddComponent<MeshFilter>();
         PlayerInstanceRenderer = PlayerInstance.AddComponent<MeshRenderer>();
-        PlayerInstanceMaterial = new Material(Shader.Find("Standard"));
-        PlayerInstanceMaterial.SetTexture("_MainTex", iMeshManager.streamContainer.VideoTexture);
-        PlayerInstanceMaterial.SetFloat("_Glossiness", 0);
+        
+        PlayerInstanceMaterial.SetTexture("baseColorTexture", iMeshManager.streamContainer.VideoTexture);
+        PlayerInstanceMaterial.SetTexture("emissiveTexture", iMeshManager.streamContainer.VideoTexture);
+
         PlayerInstanceRenderer.material = PlayerInstanceMaterial;
+
+        if (IsAVControlledPlay)
+        {
+            iMeshManager.streamContainer.VideoContainer.isLooping = true;
+            iMeshManager.streamContainer.VideoContainer.Play();
+        }
+    }
+
+    public void InitMaterial(Material material)
+    {
+        PlayerInstanceMaterial = new Material(material);
     }
 
 
 
     void SwapFrame(bool isReverse = false)
     {
+        if (IsAVControlledPlay)
+        {
+            if (CurrentFrameIndex != (int)iMeshManager.streamContainer.VideoContainer.frame)
+            {
+                CurrentFrameIndex = (int)iMeshManager.streamContainer.VideoContainer.frame;
+
+                if ( (CurrentFrameIndex + 1) >= iMeshManager.streamHandler.TotalLoadCount)
+                {
+                    CurrentFrameIndex = iMeshManager.streamHandler.TotalLoadCount - 1;
+                }
+
+                PlayerInstanceMesh.mesh = iMeshManager.streamContainer.Meshes[CurrentFrameIndex];
+            }
+
+            return;
+        }
+
+
         if (isReverse)
         {
             CurrentFrameIndex = (CurrentFrameIndex - 1) < 0 ? iMeshManager.streamHandler.TotalLoadCount - 1 : CurrentFrameIndex - 1;
@@ -71,6 +117,14 @@ public class StreamPlayer : MonoBehaviour
         iMeshManager.streamContainer.VideoContainer.frame = CurrentFrameIndex;
         //PlayerInstanceRenderer.material = iMeshManager.streamContainer.Materials[CurrentFrameIndex];
         //Debug.Log("[IMeshStreamer - Player] Swapping to frame " + CurrentFrameIndex);
+
+        //PlayerInstanceMaterial.SetTexture("baseColorTexture", iMeshManager.streamContainer.Textures[CurrentFrameIndex]);
+        //PlayerInstanceMaterial.SetTexture("emissiveTexture", iMeshManager.streamContainer.Textures[CurrentFrameIndex]);
+    }
+
+    public void AVControlledFramePlay()
+    {
+        Debug.Log("[IMeshStreamer - Player] AVControlledFramePlay");
     }
 
     void BufferingPlay(bool isReverse = false)
@@ -112,11 +166,42 @@ public class StreamPlayer : MonoBehaviour
     {
         if (isPlaying)
         {
+            if (IsAVControlledPlay)
+            {
+                BufferingPlay(isReverse);
+                return;
+            }
+
             FrameTimer += Time.deltaTime;
             if (FrameTimer >= 1.0f / TargetFPS)
             {
                 FrameTimer -= 1.0f / TargetFPS;
                 BufferingPlay(isReverse);
+            }
+        }
+    }
+
+    void ManualPlay()
+    {
+        if (isPlaying)
+        {
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                SwapFrame();
+                /*
+                RenderTexture rt = iMeshManager.streamContainer.VideoContainer.texture as RenderTexture;
+
+                Texture2D tex = new Texture2D(rt.width, rt.height);
+                RenderTexture.active = rt;
+                tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+                tex.Apply();
+                Textures.Add(tex);
+                */
+                
+            }
+            else if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                SwapFrame(true);
             }
         }
     }

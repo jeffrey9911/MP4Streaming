@@ -14,10 +14,10 @@ if not os.path.exists(f"{FOLDER}/glb"):
 '''
 
 MEDIA_FOLDER = input("Enter folder path: ").strip("'").strip('"')
-if not os.path.exists(f"{MEDIA_FOLDER}/glb"):
+if not os.path.exists(f"{MEDIA_FOLDER}/stream"):
     print("Folder does not exist")
     quit()
-MEDIA_FOLDER = f"{MEDIA_FOLDER}/glb"
+MEDIA_FOLDER = f"{MEDIA_FOLDER}/stream"
 print(MEDIA_FOLDER)
 
 @app.route('/')

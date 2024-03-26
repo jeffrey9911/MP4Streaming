@@ -1,6 +1,7 @@
 import os
 import re
 import xml.etree.ElementTree as ET
+from xml.dom import minidom
 
 import bpy
 
@@ -28,12 +29,6 @@ if not os.path.exists(f"{FOLDER}/glb"):
 
 MESHES = GetFiles(FOLDER, ".obj")
 MESHES = sorted(MESHES, key=lambda x: SortFiles(x, ".obj"))
-
-TEXTURES = GetFiles(FOLDER, ".jpg")
-TEXTURES = sorted(TEXTURES, key=lambda x: SortFiles(x, ".jpg"))
-
-MATERIALS = GetFiles(FOLDER, ".mtl")
-MATERIALS = sorted(MATERIALS, key=lambda x: SortFiles(x, ".mtl"))
 
 '''
 if len(MESHES) != len(TEXTURES) or len(MESHES) != len(MATERIALS):
@@ -91,23 +86,23 @@ for file in MESHES:
 
 
 mpdFile = ET.Element("MPD", xmlns="urn:mpeg:dash:schema:mpd:2011", type="static", minBufferTime="PT1S")
-
 period = ET.SubElement(mpdFile, "Period", start="0")
-
 adaptationSet = ET.SubElement(period, "AdaptationSet")
-
 representation = ET.SubElement(adaptationSet, "Representation", id="glb_models", mimeType="model/gltf-binary", codecs="none", bandwidth="200000")
-
 baseUrl = ET.SubElement(representation, "BaseURL")
 baseUrl.text = f"{FOLDER}/glb"
-
 segmentList = ET.SubElement(representation, "SegmentList")
 
 for glbFile in GLBMESHES:
     ET.SubElement(segmentList, "SegmentURL", media=f"{os.path.basename(glbFile)}")
 
-tree = ET.ElementTree(mpdFile)
-tree.write(f"{FOLDER}/glb/stream.mpd", encoding="utf-8", xml_declaration=True)
+#tree = ET.ElementTree(mpdFile)
+xmlstr = ET.tostring(mpdFile, encoding='utf-8', method='xml')
+#tree.write(f"{FOLDER}/glb/stream.mpd", encoding="utf-8", xml_declaration=True)
+pretty_xml_as_string = minidom.parseString(xmlstr).toprettyxml(indent="    ")
+
+with open(f"{FOLDER}/glb/stream.mpd", "w", encoding="utf-8") as f:
+    f.write(pretty_xml_as_string)
 
 print(f"File {FOLDER}/glb/stream.mpd created")
 input("Press enter to quit")

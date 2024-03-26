@@ -275,6 +275,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TargetFPS: 60
+  IsManual: 0
+  IsAVControlledPlay: 1
+  Textures: []
 --- !u!114 &798129252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -287,6 +290,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a201af9869a36014081318a965f280b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Textures: []
 --- !u!114 &798129253
 MonoBehaviour:
   m_ObjectHideFlags: 0

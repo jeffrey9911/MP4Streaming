@@ -10,7 +10,7 @@ public class StreamContainer : MonoBehaviour
 
     public List<Mesh> Meshes {get; private set;} = new List<Mesh>();
     //public List<Material> Materials {get; private set;} = new List<Material>();
-    //public List<Texture2D> Textures = new List<Texture2D>();
+    public List<Texture2D> Textures = new List<Texture2D>();
 
     public VideoPlayer VideoContainer {get; private set;}
     public RenderTexture VideoTexture {get; private set;}
@@ -46,6 +46,11 @@ public class StreamContainer : MonoBehaviour
         StartCoroutine(iMeshManager.streamHandler.VideoTextureOnReady());
     }
 
+    void VideoContainerFrameReady(VideoPlayer videoPlayer)
+    {
+        iMeshManager.streamPlayer.AVControlledFramePlay();
+    }
+
     public void LoadMesh(Mesh mesh)
     {
         Meshes.Add(mesh);
@@ -58,7 +63,7 @@ public class StreamContainer : MonoBehaviour
 
     public void LoadTexture(Texture2D texture)
     {
-        //Textures.Add(texture);
+        Textures.Add(texture);
     }
 
     public void Clear()
