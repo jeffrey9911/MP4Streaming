@@ -28,8 +28,11 @@ public class StreamHandler : MonoBehaviour
         Manifest = name;
     }
 
+    System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+
     void Start()
     {
+        stopwatch.Start();
         if(transform.TryGetComponent<IMeshManager>(out iMeshManager))
         {
             gltfImport = new GLTFast.GltfImport();
@@ -129,6 +132,8 @@ public class StreamHandler : MonoBehaviour
 
         if (iMeshManager.streamContainer.VideoContainer.frameCount > (ulong)TotalLoadCount)
         {
+            stopwatch.Stop();
+            Debug.Log($"[IMeshStreamer - Handler] Video Mesh Loaded in {stopwatch.ElapsedMilliseconds}ms");
             Debug.Log("[IMeshStreamer - Handler] Video Mesh Matched");
 
             /*
@@ -149,7 +154,7 @@ public class StreamHandler : MonoBehaviour
             }
             */
 
-            //iMeshManager.streamPlayer.Play();
+            iMeshManager.streamPlayer.Play();
 
             isTextureLoaded = true;
         }

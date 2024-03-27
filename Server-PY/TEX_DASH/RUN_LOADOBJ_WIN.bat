@@ -1,1 +1,0 @@
-blender --background --python Tex_to_Video.py

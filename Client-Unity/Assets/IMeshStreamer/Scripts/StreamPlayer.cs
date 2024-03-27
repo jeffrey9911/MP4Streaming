@@ -96,7 +96,14 @@ public class StreamPlayer : MonoBehaviour
                     CurrentFrameIndex = iMeshManager.streamHandler.TotalLoadCount - 1;
                 }
 
-                PlayerInstanceMesh.mesh = iMeshManager.streamContainer.Meshes[CurrentFrameIndex];
+                try
+                {
+                    PlayerInstanceMesh.mesh = iMeshManager.streamContainer.Meshes[CurrentFrameIndex];
+                }
+                catch
+                {
+                    Debug.LogWarning("[IMeshStreamer - Player] Mesh not loaded yet");
+                }
             }
 
             return;
