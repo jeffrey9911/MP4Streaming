@@ -3,6 +3,7 @@ import re
 import subprocess
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+import math
 import bpy
 
 def GetFiles(filePath, fileType):
@@ -28,6 +29,24 @@ def FilePattern(input_filename):
         return pattern
     else:
         return "No digits found in the file name."
+    
+
+def get_audio_length_ffmpeg(file_path):
+    cmd = ['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', file_path]
+    result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    duration_str = result.stdout.decode().strip()
+    try:
+        return float(duration_str)
+    except ValueError:
+        print("Could not determine the file duration.")
+        return None
+    
+
+def auto_floor_ceil(value):
+    if value - math.floor(value) < 0.5:
+        return math.floor(value)
+    else:
+        return math.ceil(value)
 
 
 FOLDER = input("Enter folder path: ").strip("'").strip('"')
@@ -42,6 +61,12 @@ TEXTURES = sorted(TEXTURES, key=lambda x: SortFiles(x, ".jpg"))
 
 AUDIO = GetFiles(FOLDER, ".wav")
 AUDIO = sorted(AUDIO, key=lambda x: SortFiles(x, ".wav"))
+
+FPS = 30
+if (len(AUDIO) == 1):
+    FPS =  len(TEXTURES) / get_audio_length_ffmpeg(AUDIO[0])
+    print(f"FPS: {FPS}")
+FPS = auto_floor_ceil(FPS)
 
 for i in range(len(MESHES)):
     bpy.ops.object.select_all(action='SELECT')
@@ -73,22 +98,22 @@ output_file = f"{FOLDER}/stream/stream.mp4"
 
 ffmpeg_cmd_noaudio = [
     'ffmpeg',
-    '-framerate', '30',
+    '-framerate', f'{FPS}',
     '-i', f"{FOLDER}/{FilePattern(os.path.basename(TEXTURES[0]))}",
     '-c:v', 'libx264',
-    '-vf', 'fps=30',
+    '-vf', f'fps={FPS}',
     '-pix_fmt', 'yuv420p',
     output_file
 ]
 
 ffmpeg_cmd_audio = [
     'ffmpeg',
-    '-framerate', '30',
+    '-framerate', f'{FPS}',
     '-i', f"{FOLDER}/{FilePattern(os.path.basename(TEXTURES[0]))}",
     '-i', AUDIO[0],
     '-c:v', 'libx264',
     '-c:a', 'aac',
-    '-vf', 'fps=30',
+    '-vf', f'fps={FPS}',
     '-pix_fmt', 'yuv420p',
     output_file
 ]

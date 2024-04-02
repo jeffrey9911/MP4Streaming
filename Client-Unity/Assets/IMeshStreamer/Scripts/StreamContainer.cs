@@ -70,6 +70,10 @@ public class StreamContainer : MonoBehaviour
     {
         Meshes.Clear();
         //Materials.Clear();
-        //Textures.Clear();
+        Textures.Clear();
+        VideoContainer.Stop();
+        VideoContainer.targetTexture.Release();
+        Destroy(VideoContainer);
+        Destroy(VideoTexture);
     }
 }

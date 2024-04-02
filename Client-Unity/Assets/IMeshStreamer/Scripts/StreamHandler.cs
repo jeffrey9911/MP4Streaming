@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine.Video;
+using UnityEngine.UIElements;
 
 public class StreamHandler : MonoBehaviour
 {
@@ -130,7 +131,7 @@ public class StreamHandler : MonoBehaviour
             yield return null;
         }
 
-        if (iMeshManager.streamContainer.VideoContainer.frameCount > (ulong)TotalLoadCount)
+        if (iMeshManager.streamContainer.VideoContainer.frameCount >= (ulong)TotalLoadCount)
         {
             stopwatch.Stop();
             Debug.Log($"[IMeshStreamer - Handler] Video Mesh Loaded in {stopwatch.ElapsedMilliseconds}ms");
@@ -154,7 +155,8 @@ public class StreamHandler : MonoBehaviour
             }
             */
 
-            iMeshManager.streamPlayer.Play();
+            //yield return new WaitForSeconds(0.5f);
+            //iMeshManager.streamPlayer.Play();
 
             isTextureLoaded = true;
         }
@@ -216,8 +218,12 @@ public class StreamHandler : MonoBehaviour
         Debug.Log("[IMeshStreamer - Handler] Segments loaded");
     }
 
-    void OnDestory()
+    // Dispose gltfImport when quitting
+    void OnApplicationQuit()
     {
         iMeshManager.streamContainer.Clear();
+        gltfImport.Dispose();
     }
+
+    
 }
