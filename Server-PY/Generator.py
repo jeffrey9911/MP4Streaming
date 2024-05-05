@@ -50,8 +50,10 @@ def auto_floor_ceil(value):
 
 
 FOLDER = input("Enter folder path: ").strip("'").strip('"')
-if not os.path.exists(f"{FOLDER}/stream"):
-    os.makedirs(f"{FOLDER}/stream")
+
+OUTPUTFOLDER = os.path.dirname(FOLDER)
+if not os.path.exists(f"{OUTPUTFOLDER}/stream"):
+    os.makedirs(f"{OUTPUTFOLDER}/stream")
 
 MESHES = GetFiles(FOLDER, ".obj")
 MESHES = sorted(MESHES, key=lambda x: SortFiles(x, ".obj"))
@@ -77,7 +79,7 @@ for i in range(len(MESHES)):
     bpy.ops.wm.obj_import(filepath=MESHES[i], directory=FOLDER, files=[{"name":f"{baseName}", "name":f"{baseName}"}])
 
     name, ext = os.path.splitext(baseName)
-    glbFilePath = f"{FOLDER}/stream/{name}.glb"
+    glbFilePath = f"{OUTPUTFOLDER}/stream/{name}.glb"
     
     if (i == 0):
         bpy.ops.export_scene.gltf(filepath=glbFilePath, export_format='GLB')
@@ -87,13 +89,13 @@ for i in range(len(MESHES)):
     #print(f"File {glbFilePath} created")
 
 
-GLBMESHES = GetFiles(f"{FOLDER}/stream", ".glb")
+GLBMESHES = GetFiles(f"{OUTPUTFOLDER}/stream", ".glb")
 GLBMESHES = sorted(GLBMESHES, key=lambda x: SortFiles(x, ".glb"))
 
 
 print(f"{FilePattern(os.path.basename(TEXTURES[0]))}, Converting to MP4...")
 
-output_file = f"{FOLDER}/stream/stream.mp4"
+output_file = f"{OUTPUTFOLDER}/stream/stream.mp4"
 
 
 ffmpeg_cmd_noaudio = [
@@ -130,7 +132,7 @@ period = ET.SubElement(mpdFile, "Period", start="0")
 adaptationSet = ET.SubElement(period, "AdaptationSet")
 representation = ET.SubElement(adaptationSet, "Representation", id="glb_av_stream", mimeType="video/volumetric-video", codecs="none", bandwidth="200000")
 baseUrl = ET.SubElement(representation, "BaseURL")
-baseUrl.text = f"{FOLDER}/glb"
+baseUrl.text = f"{OUTPUTFOLDER}/stream"
 segmentList = ET.SubElement(representation, "SegmentList")
 
 ET.SubElement(segmentList, "SEGINFO", fps="30", audio="true" if len(AUDIO) == 1 else "false")
@@ -142,9 +144,9 @@ for glbFile in GLBMESHES:
 xmlstr = ET.tostring(mpdFile, encoding='utf-8', method='xml')
 pretty_xml_as_string = minidom.parseString(xmlstr).toprettyxml(indent="    ")
 
-with open(f"{FOLDER}/stream/stream.mpd", "w", encoding="utf-8") as f:
+with open(f"{OUTPUTFOLDER}/stream/stream.mpd", "w", encoding="utf-8") as f:
     f.write(pretty_xml_as_string)
 
-print(f"File {FOLDER}/stream/stream.mpd created")
+print(f"File {OUTPUTFOLDER}/stream/stream.mpd created")
 
 input("Press Enter to exit...")

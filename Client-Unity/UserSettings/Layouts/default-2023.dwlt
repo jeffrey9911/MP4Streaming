@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PixelRect:
     serializedVersion: 2
-    x: -280
-    y: -1162
-    width: 1347
-    height: 775
+    x: -279
+    y: -1225
+    width: 875
+    height: 551
   m_ShowMode: 4
   m_Title: Game
   m_RootView: {fileID: 3}
@@ -41,8 +41,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 30
-    width: 1347
-    height: 725
+    width: 875
+    height: 501
   m_MinSize: {x: 50, y: 73}
   m_MaxSize: {x: 4000, y: 4023}
   m_ActualView: {fileID: 6}
@@ -66,8 +66,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1347
-    height: 775
+    width: 875
+    height: 551
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
   m_UseTopView: 1
@@ -91,7 +91,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1347
+    width: 875
     height: 30
   m_MinSize: {x: 0, y: 0}
   m_MaxSize: {x: 0, y: 0}
@@ -112,8 +112,8 @@ MonoBehaviour:
   m_Position:
     serializedVersion: 2
     x: 0
-    y: 755
-    width: 1347
+    y: 531
+    width: 875
     height: 20
   m_MinSize: {x: 0, y: 0}
   m_MaxSize: {x: 0, y: 0}
@@ -138,10 +138,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Game\u200B"
   m_Pos:
     serializedVersion: 2
-    x: -280
-    y: -1132
-    width: 1347
-    height: 706
+    x: -279
+    y: -1195
+    width: 875
+    height: 482
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -195,23 +195,23 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 21
-      width: 1347
-      height: 685
-    m_Scale: {x: 1.1787686, y: 1.1787686}
-    m_Translation: {x: 673.5, y: 342.5}
+      width: 875
+      height: 461
+    m_Scale: {x: 0.8537037, y: 0.8537037}
+    m_Translation: {x: 437.5, y: 230.5}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
-      x: -571.35895
-      y: -290.55743
-      width: 1142.7179
-      height: 581.11487
+      x: -512.4729
+      y: -270
+      width: 1024.9458
+      height: 540
     m_MinimalGUI: 1
-  m_defaultScale: 1
-  m_LastWindowPixelSize: {x: 2694, y: 1412}
+  m_defaultScale: 0.8537037
+  m_LastWindowPixelSize: {x: 1750, y: 964}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 00000000000000000000

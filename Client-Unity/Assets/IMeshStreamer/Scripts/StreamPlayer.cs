@@ -61,6 +61,10 @@ public class StreamPlayer : MonoBehaviour
         PlayerInstance.transform.SetParent(this.transform);
         PlayerInstance.transform.localPosition = Vector3.zero;
         PlayerInstance.transform.localRotation = Quaternion.Euler(new Vector3(90f, 0, 0));
+
+        PlayerInstance.AddComponent<StandRotate>();
+
+
         PlayerInstanceMesh = PlayerInstance.AddComponent<MeshFilter>();
         PlayerInstanceRenderer = PlayerInstance.AddComponent<MeshRenderer>();
         
