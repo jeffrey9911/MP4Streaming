@@ -4,5 +4,12 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
-  m_configObjects: {}
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/VR_Streaming.unity
+    guid: e81bd5617ff22e848a31021cbe0f2016
+  m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 31304cb8469fae84d8d78b9ab887218d, type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 09628b70676adc845bbed2d406e7c18b, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: b91ec8f791ce015459ee6f204a237afd, type: 2}
+  m_UseUCBPForAssetBundles: 0

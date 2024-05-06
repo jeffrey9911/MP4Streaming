@@ -33,7 +33,8 @@ public class StreamHandler : MonoBehaviour
 
     void Start()
     {
-        stopwatch.Start();
+        
+        
         if(transform.TryGetComponent<IMeshManager>(out iMeshManager))
         {
             gltfImport = new GLTFast.GltfImport();
@@ -42,7 +43,11 @@ public class StreamHandler : MonoBehaviour
         else
         {
             Debug.LogError("[IMeshStreamer - Handler] No IMeshManager found");
+            iMeshManager.iMeshDebugger.Debug("[IMeshStreamer - Handler] No IMeshManager found");
         }
+
+        iMeshManager.iMeshDebugger.Debug("[IMeshStreamer - Handler] StreamHandler started");
+        stopwatch.Start();
         
     }
 
@@ -66,6 +71,7 @@ public class StreamHandler : MonoBehaviour
                 else
                 {
                     Debug.Log("[IMeshStreamer - Handler] Manifest fetched");
+                    iMeshManager.iMeshDebugger.Debug("[IMeshStreamer - Handler] Manifest fetched");
                     ParseManifest(webRequest.downloadHandler.text);
                 }
             }
@@ -103,6 +109,7 @@ public class StreamHandler : MonoBehaviour
 
         TotalLoadCount = segments.Count;
         Debug.Log($"[IMeshStreamer - Handler] Manifest parsed: {segments.Count} segments");
+        iMeshManager.iMeshDebugger.Debug($"[IMeshStreamer - Handler] Manifest parsed: {segments.Count} segments");
         
         LoadSegment(segments);
 
@@ -112,6 +119,7 @@ public class StreamHandler : MonoBehaviour
     IEnumerator ParseMP4(XDocument xDocument)
     {
         Debug.Log("[IMeshStreamer - Handler] Loading video");
+        iMeshManager.iMeshDebugger.Debug("[IMeshStreamer - Handler] Loading video");
 
         XNamespace ns = "urn:mpeg:dash:schema:mpd:2011";
         var segmentURLs = xDocument.Descendants(ns + "VAURL");
@@ -135,7 +143,9 @@ public class StreamHandler : MonoBehaviour
         {
             stopwatch.Stop();
             Debug.Log($"[IMeshStreamer - Handler] Video Mesh Loaded in {stopwatch.ElapsedMilliseconds}ms");
+            iMeshManager.iMeshDebugger.Debug($"[IMeshStreamer - Handler] Video Mesh Loaded in {stopwatch.ElapsedMilliseconds}ms");
             Debug.Log("[IMeshStreamer - Handler] Video Mesh Matched");
+            iMeshManager.iMeshDebugger.Debug("[IMeshStreamer - Handler] Video Mesh Matched");
 
             /*
             for (ulong i = 0; i < iMeshManager.streamContainer.VideoContainer.frameCount; i++)
@@ -163,6 +173,7 @@ public class StreamHandler : MonoBehaviour
         else
         {
             Debug.LogError($"[IMeshStreamer - Handler] Video Mesh Mismatch - GLB: {TotalLoadCount} MP4: {iMeshManager.streamContainer.VideoContainer.frameCount.ToString()}");
+            iMeshManager.iMeshDebugger.Debug($"[IMeshStreamer - Handler] Video Mesh Mismatch - GLB: {TotalLoadCount} MP4: {iMeshManager.streamContainer.VideoContainer.frameCount.ToString()}");
             isTextureLoaded = false;
         }
 

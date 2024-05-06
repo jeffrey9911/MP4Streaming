@@ -8,5 +8,6 @@ public class IMeshManager : MonoBehaviour
     [SerializeField] public StreamHandler streamHandler;
     [SerializeField] public StreamContainer streamContainer;
     [SerializeField] public StreamPlayer streamPlayer;
+    [SerializeField] public IMeshDebugger iMeshDebugger;
 
 }

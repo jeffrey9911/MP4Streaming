@@ -1,0 +1,21 @@
+# ninja log v5
+39	160	7366560584741334	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	295795e4b76ef93b
+6	655	7366560589647667	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	4409abd2108da4e7
+162	288	7366560585662978	C:/LocalRepo/MeshStreaming/Client-Unity/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/6p4u3f5m/obj/arm64-v8a/libswappywrapper.so	522ed4f0643d515d
+10	434	7366560587472621	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	60ad0af067154716
+15	439	7366560587534708	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	d8eac20b20a626e9
+0	510	7366560588218139	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	4aeb43c834159193
+26	453	7366560587655262	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	3a6072f14659f264
+32	490	7366560588025180	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	2536fe5c04725a91
+20	605	7366560589153446	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	1dc715fd670f685a
+655	765	7366560590442423	C:/LocalRepo/MeshStreaming/Client-Unity/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/6p4u3f5m/obj/arm64-v8a/libgame.so	465d4947de6f7850
+40	114	7366565793138677	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	295795e4b76ef93b
+114	244	7366565794014377	C:/LocalRepo/MeshStreaming/Client-Unity/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/6p4u3f5m/obj/arm64-v8a/libswappywrapper.so	522ed4f0643d515d
+2	384	7366565795813162	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	d8eac20b20a626e9
+17	388	7366565795846844	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	60ad0af067154716
+22	411	7366565796074221	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	3a6072f14659f264
+34	453	7366565796501249	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	2536fe5c04725a91
+7	457	7366565796541460	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	4aeb43c834159193
+27	563	7366565797601911	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	1dc715fd670f685a
+13	602	7366565797970462	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	4409abd2108da4e7
+602	712	7366565798754663	C:/LocalRepo/MeshStreaming/Client-Unity/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/6p4u3f5m/obj/arm64-v8a/libgame.so	465d4947de6f7850

@@ -1,6 +1,8 @@
 using UnityEditor;
 using UnityEngine;
 
+#if UNITY_EDITOR
+
 [CustomEditor(typeof(IMeshManager))]
 public class IMeshGUI : Editor
 {
@@ -25,3 +27,5 @@ public class IMeshGUI : Editor
         // Include more controls as needed
     }
 }
+
+#endif

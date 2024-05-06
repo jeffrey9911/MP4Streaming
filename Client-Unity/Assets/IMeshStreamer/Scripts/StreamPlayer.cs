@@ -34,6 +34,7 @@ public class StreamPlayer : MonoBehaviour
         if (!transform.TryGetComponent<IMeshManager>(out iMeshManager))
         {
             Debug.LogError("[IMeshStreamer - Player] No IMeshManager found");
+            iMeshManager.iMeshDebugger.Debug("[IMeshStreamer - Player] No IMeshManager found");
         }
     }
 
@@ -78,6 +79,8 @@ public class StreamPlayer : MonoBehaviour
             iMeshManager.streamContainer.VideoContainer.isLooping = true;
             iMeshManager.streamContainer.VideoContainer.Play();
         }
+
+        iMeshManager.iMeshDebugger.Debug("[IMeshStreamer - Player] Play");
     }
 
     public void InitMaterial(Material material)
