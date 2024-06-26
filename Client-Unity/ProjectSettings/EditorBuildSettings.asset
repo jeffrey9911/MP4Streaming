@@ -4,5 +4,12 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/SampleScene_Streaming.unity
+    guid: 4b14706fefc94bf4e8eda8ea02aa2c05
+  - enabled: 0
+    path: Assets/Scenes/GLTFastTest.unity
+    guid: e67d65ec4ad9f4c8183bbefe9b7a4a02
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

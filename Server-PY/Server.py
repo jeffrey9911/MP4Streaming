@@ -29,4 +29,4 @@ def stream_video(path):
     return send_from_directory(MEDIA_FOLDER, path)
 
 if __name__ == '__main__':
-    app.run(host="127.0.0.1", debug=True, port=8000)
+    app.run(host="10.42.0.210", debug=True, port=8000)

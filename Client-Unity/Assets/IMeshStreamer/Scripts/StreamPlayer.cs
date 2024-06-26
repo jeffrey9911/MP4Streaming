@@ -55,28 +55,39 @@ public class StreamPlayer : MonoBehaviour
     [ContextMenu("Play")]
     public void Play()
     {
-        isPlaying = true;
-
-        PlayerInstance = new GameObject("PlayerInstance");
-        PlayerInstance.transform.SetParent(this.transform);
-        PlayerInstance.transform.localPosition = Vector3.zero;
-        PlayerInstance.transform.localRotation = Quaternion.Euler(new Vector3(90f, 0, 0));
-
-        PlayerInstance.AddComponent<StandRotate>();
-
-
-        PlayerInstanceMesh = PlayerInstance.AddComponent<MeshFilter>();
-        PlayerInstanceRenderer = PlayerInstance.AddComponent<MeshRenderer>();
-        
-        PlayerInstanceMaterial.SetTexture("baseColorTexture", iMeshManager.streamContainer.VideoTexture);
-        PlayerInstanceMaterial.SetTexture("emissiveTexture", iMeshManager.streamContainer.VideoTexture);
-
-        PlayerInstanceRenderer.material = PlayerInstanceMaterial;
-
-        if (IsAVControlledPlay)
+        try
         {
-            iMeshManager.streamContainer.VideoContainer.isLooping = true;
-            iMeshManager.streamContainer.VideoContainer.Play();
+            isPlaying = true;
+
+            PlayerInstance = new GameObject("PlayerInstance");
+            PlayerInstance.transform.SetParent(this.transform);
+            PlayerInstance.transform.localPosition = Vector3.zero;
+            PlayerInstance.transform.localRotation = Quaternion.Euler(new Vector3(90f, 0, 0));
+
+            PlayerInstance.AddComponent<StandRotate>();
+
+
+            PlayerInstanceMesh = PlayerInstance.AddComponent<MeshFilter>();
+            PlayerInstanceRenderer = PlayerInstance.AddComponent<MeshRenderer>();
+            
+            // todo: fix material issues - set shaders to include downloaded ones.
+
+            
+            PlayerInstanceMaterial.SetTexture("baseColorTexture", iMeshManager.streamContainer.VideoTexture);
+            PlayerInstanceMaterial.SetTexture("emissiveTexture", iMeshManager.streamContainer.VideoTexture);
+
+            PlayerInstanceRenderer.material = PlayerInstanceMaterial;
+            
+            
+            if (IsAVControlledPlay)
+            {
+                iMeshManager.streamContainer.VideoContainer.isLooping = true;
+                iMeshManager.streamContainer.VideoContainer.Play();
+            }
+        }
+        catch (System.Exception e)
+        {
+            iMeshManager.Debug($"[Play()]: {e} : {e.Message} : {e.StackTrace}");
         }
     }
 
