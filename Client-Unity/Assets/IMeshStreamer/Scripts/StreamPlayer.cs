@@ -64,9 +64,6 @@ public class StreamPlayer : MonoBehaviour
             PlayerInstance.transform.localPosition = Vector3.zero;
             PlayerInstance.transform.localRotation = Quaternion.Euler(new Vector3(90f, 0, 0));
 
-            PlayerInstance.AddComponent<StandRotate>();
-
-
             PlayerInstanceMesh = PlayerInstance.AddComponent<MeshFilter>();
             PlayerInstanceRenderer = PlayerInstance.AddComponent<MeshRenderer>();
             
@@ -114,6 +111,11 @@ public class StreamPlayer : MonoBehaviour
                 try
                 {
                     PlayerInstanceMesh.mesh = iMeshManager.streamContainer.Meshes[CurrentFrameIndex];
+
+                    if (CurrentFrameIndex < 3)
+                    {
+                        ApplyMeshOffset();
+                    }
                 }
                 catch
                 {
@@ -228,4 +230,27 @@ public class StreamPlayer : MonoBehaviour
         }
     }
 
+
+    void ApplyMeshOffset()
+    {
+        if (!iMeshManager.streamContainer.IsMeshOffseted)
+        {
+            float maxZ = float.MinValue;
+            foreach (Vector3 vertex in PlayerInstanceMesh.mesh.vertices)
+            {
+                if (vertex.z > maxZ)
+                {
+                    maxZ = vertex.z;
+                }
+            }
+
+            Debug.Log("[IMeshStreamer - Player] Lowest Point: " + maxZ);
+
+            iMeshManager.streamContainer.MeshOffset = new Vector3(0, maxZ, 0);
+            PlayerInstance.transform.localPosition += iMeshManager.streamContainer.MeshOffset;
+            iMeshManager.streamContainer.IsMeshOffseted = true;
+
+            iMeshManager.Debug("[IMeshStreamer - Player] Mesh Offset Applied");
+        }
+    }
 }

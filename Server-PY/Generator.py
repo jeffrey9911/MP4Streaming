@@ -78,13 +78,24 @@ for i in range(len(MESHES)):
 
     bpy.ops.wm.obj_import(filepath=MESHES[i], directory=FOLDER, files=[{"name":f"{baseName}", "name":f"{baseName}"}])
 
+    bpy.ops.object.select_all(action='SELECT')
+
+    for obj in bpy.context.selected_objects:
+        bpy.context.view_layer.objects.active = obj
+        bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')
+        bpy.ops.object.location_clear()
+        
+        min_z = min((v.co.z for v in obj.data.vertices))
+        obj.location.z -= min_z
+
+
     name, ext = os.path.splitext(baseName)
     glbFilePath = f"{OUTPUTFOLDER}/stream/{name}.glb"
     
     if (i == 0):
-        bpy.ops.export_scene.gltf(filepath=glbFilePath, export_format='GLB')
+        bpy.ops.export_scene.gltf(filepath=glbFilePath, export_format='GLB', export_yup=True, export_apply=True)
     else:
-        bpy.ops.export_scene.gltf(filepath=glbFilePath, export_format='GLB', export_materials='NONE')
+        bpy.ops.export_scene.gltf(filepath=glbFilePath, export_format='GLB', export_materials='NONE', export_yup=True, export_apply=True)
 
     #print(f"File {glbFilePath} created")
 

@@ -15,6 +15,10 @@ public class StreamContainer : MonoBehaviour
     public VideoPlayer VideoContainer {get; private set;}
     public RenderTexture VideoTexture {get; private set;}
 
+    public Vector3 MeshOffset = Vector3.zero;
+
+    public bool IsMeshOffseted = false;
+
     void Start()
     {
         if (!transform.TryGetComponent<IMeshManager>(out iMeshManager))

@@ -5,11 +5,17 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SampleScene_Streaming.unity
     guid: 4b14706fefc94bf4e8eda8ea02aa2c05
   - enabled: 0
     path: Assets/Scenes/GLTFastTest.unity
     guid: e67d65ec4ad9f4c8183bbefe9b7a4a02
-  m_configObjects: {}
+  - enabled: 1
+    path: Assets/Scenes/SampleScene_Streaming_AR.unity
+    guid: b9c078a78a3ca47cd99036042e733c9d
+  m_configObjects:
+    UnityEditor.XR.ARKit.ARKitSettings: {fileID: 11400000, guid: 72c70785df14e4b5c9441428b6d0efe0, type: 2}
+    com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: 40dc50f460daa4b179fd42e8415c24fe, type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: d7252afc3426e4915ac1c3d3ba212701, type: 2}
   m_UseUCBPForAssetBundles: 0
