@@ -11,6 +11,11 @@ scopes = {
 	"last_search.45C55C1A" = ""
 	"OpenInspectorPreview.45C55C1A" = "0"
 	"currentGroup.45C55C1A" = "asset"
+	"picker_window_position_offset.075BCD15" = "157.5;332;320;550"
+	"picker_visibility_flags.075BCD15" = "264"
+	"picker_item_size.075BCD15" = "96"
+	"picker_inspector.075BCD15" = "0"
+	"picker_current_group.075BCD15" = "all"
 }
 providers = {
 	performance = {

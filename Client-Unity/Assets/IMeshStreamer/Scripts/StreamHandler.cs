@@ -9,12 +9,15 @@ using Unity.VisualScripting;
 using UnityEngine.Video;
 using UnityEngine.UIElements;
 using GLTFast;
+using UnityEngine.UI;
 
 public class StreamHandler : MonoBehaviour
 {
     IMeshManager iMeshManager;
     [SerializeField] public string BaseURL = "";
     [SerializeField] public string Manifest = "";
+
+    [SerializeField] private InputField inputField;
 
     GLTFast.GltfImport gltfImport;
 
@@ -24,15 +27,25 @@ public class StreamHandler : MonoBehaviour
     public bool isMeshLoaded { get; private set; } = false;
     public bool isTextureLoaded { get; private set; } = false;
 
-    public void SetManifestURL(string baseUrl, string name)
-    {
-        BaseURL = baseUrl;
-        Manifest = name;
-    }
 
     System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
 
     void Start()
+    {
+        
+        
+    }
+
+    public void LoadOnClick()
+    {
+        BaseURL = $"http://{inputField.text}/video";
+        Manifest = "stream.mpd";
+        StartLoad();
+    }
+
+
+    [ContextMenu("StartLoad")]
+    public void StartLoad()
     {
         try
         {
@@ -52,7 +65,6 @@ public class StreamHandler : MonoBehaviour
             iMeshManager.Debug($"[Start()]: {e} : {e.Message} : {e.StackTrace}");
 
         }
-        
     }
 
     IEnumerator FetchManifest()

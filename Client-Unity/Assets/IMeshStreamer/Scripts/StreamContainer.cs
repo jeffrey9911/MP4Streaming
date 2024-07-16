@@ -58,6 +58,11 @@ public class StreamContainer : MonoBehaviour
     public void LoadMesh(Mesh mesh)
     {
         Meshes.Add(mesh);
+
+        if (!IsMeshOffseted)
+        {
+            ApplyMeshOffset(mesh);
+        }
     }
 
     public void LoadMaterial(Material material)
@@ -68,6 +73,25 @@ public class StreamContainer : MonoBehaviour
     public void LoadTexture(Texture2D texture)
     {
         Textures.Add(texture);
+    }
+
+    void ApplyMeshOffset(Mesh mesh)
+    {
+        float maxZ = float.MinValue;
+        foreach (Vector3 vertex in mesh.vertices)
+        {
+            if (vertex.z > maxZ)
+            {
+                maxZ = vertex.z;
+            }
+        }
+
+        Debug.Log("[IMeshStreamer - Container] Lowest Point: " + maxZ);
+
+        MeshOffset = new Vector3(0, maxZ, 0);
+
+        IsMeshOffseted = true;
+        Debug.Log("[IMeshStreamer - Container] Mesh Offset Applied");
     }
 
     public void Clear()

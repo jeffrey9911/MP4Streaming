@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StreamPlayer : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class StreamPlayer : MonoBehaviour
     float FrameTimer = 0;
 
     public bool IsManual = false;
-    public bool IsAVControlledPlay = false;
+    public bool IsAVControlledPlay = true;
 
     GameObject PlayerInstance;
     MeshFilter PlayerInstanceMesh;
@@ -27,6 +28,8 @@ public class StreamPlayer : MonoBehaviour
 
 
     public List<Texture2D> Textures = new List<Texture2D>();
+
+    public RawImage DebugPlayer;
 
 
     void Start()
@@ -55,13 +58,15 @@ public class StreamPlayer : MonoBehaviour
     [ContextMenu("Play")]
     public void Play()
     {
+        IsAVControlledPlay = true;
+
         try
         {
             isPlaying = true;
 
             PlayerInstance = new GameObject("PlayerInstance");
             PlayerInstance.transform.SetParent(this.transform);
-            PlayerInstance.transform.localPosition = Vector3.zero;
+            PlayerInstance.transform.localPosition = iMeshManager.streamContainer.MeshOffset;
             PlayerInstance.transform.localRotation = Quaternion.Euler(new Vector3(90f, 0, 0));
 
             PlayerInstanceMesh = PlayerInstance.AddComponent<MeshFilter>();
@@ -74,6 +79,8 @@ public class StreamPlayer : MonoBehaviour
             PlayerInstanceMaterial.SetTexture("emissiveTexture", iMeshManager.streamContainer.VideoTexture);
 
             PlayerInstanceRenderer.material = PlayerInstanceMaterial;
+
+            DebugPlayer.texture = iMeshManager.streamContainer.VideoTexture;
             
             
             if (IsAVControlledPlay)
@@ -86,6 +93,20 @@ public class StreamPlayer : MonoBehaviour
         {
             iMeshManager.Debug($"[Play()]: {e} : {e.Message} : {e.StackTrace}");
         }
+    }
+
+    public void Stop()
+    {
+        isPlaying = false;
+
+        CurrentFrameIndex = 0;
+
+        if (IsAVControlledPlay)
+        {
+            iMeshManager.streamContainer.VideoContainer.Stop();
+        }
+
+        Destroy(PlayerInstance != null ? PlayerInstance : null);
     }
 
     public void InitMaterial(Material material)
@@ -108,14 +129,14 @@ public class StreamPlayer : MonoBehaviour
                     CurrentFrameIndex = iMeshManager.streamHandler.TotalLoadCount - 1;
                 }
 
+                if (CurrentFrameIndex < 0)
+                {
+                    CurrentFrameIndex = 0;
+                }
+
                 try
                 {
                     PlayerInstanceMesh.mesh = iMeshManager.streamContainer.Meshes[CurrentFrameIndex];
-
-                    if (CurrentFrameIndex < 3)
-                    {
-                        ApplyMeshOffset();
-                    }
                 }
                 catch
                 {
@@ -161,6 +182,7 @@ public class StreamPlayer : MonoBehaviour
         {
             if (isBuffering)
             {
+                Debug.Log("[IMeshStreamer - Player] BufferingPlay");
                 if ((iMeshManager.streamHandler.CurrentLoadCount - CurrentFrameIndex) > TargetFPS 
                 || iMeshManager.streamHandler.isMeshLoaded)
                 {
